@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(auth: FirebaseAuth = Firebase.auth) {
+fun AppNavigation(auth: FirebaseAuth? = null) {
     if (!GOOGLE_SIGN_IN_ENABLED) {
         AuthenticatedStudioRoot(
             currentUserId = LocalBarbershopRepository.LOCAL_OWNER_UID,
@@ -122,7 +122,18 @@ fun AppNavigation(auth: FirebaseAuth = Firebase.auth) {
         return
     }
 
-    val currentUser by auth.authStateFlow().collectAsStateWithLifecycle(initialValue = auth.currentUser)
+    val firebaseAuth = auth ?: remember { runCatching { Firebase.auth }.getOrNull() }
+    if (firebaseAuth == null) {
+        AuthenticatedStudioRoot(
+            currentUserId = LocalBarbershopRepository.LOCAL_OWNER_UID,
+            currentUserEmail = "",
+            currentUserName = "Owner (151500)",
+            isCloudSyncEnabled = false
+        )
+        return
+    }
+
+    val currentUser by firebaseAuth.authStateFlow().collectAsStateWithLifecycle(initialValue = firebaseAuth.currentUser)
     val user = currentUser
 
     if (user == null) {
@@ -172,7 +183,9 @@ private fun AuthenticatedStudioRoot(
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val credentialManager = remember { CredentialManager.create(context) }
+    val credentialManager = remember(isCloudSyncEnabled, context) {
+        if (isCloudSyncEnabled) CredentialManager.create(context) else null
+    }
 
     val sessionState by viewModel.sessionState.collectAsStateWithLifecycle()
     val isBusy by viewModel.isBusy.collectAsStateWithLifecycle()
@@ -274,7 +287,7 @@ private fun AuthenticatedStudioRoot(
                         viewModel.loginStaffAccount(username, password, state.staffAccounts)
                     },
                     onClearError = { viewModel.clearStaffLoginError() },
-                    onSwitchGoogleAccount = if (isCloudSyncEnabled) {
+                    onSwitchGoogleAccount = if (isCloudSyncEnabled && credentialManager != null) {
                         { signOut(credentialManager, scope) }
                     } else null
                 )
