@@ -1,0 +1,225 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile storing active shop selection.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "Verified Google email" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "activeShopId": { "type": "string", "description": "Currently active barbershop ID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["uid", "email", "displayName", "activeShopId", "createdAt", "updatedAt"]
+    },
+    "StaffInvite": {
+      "title": "StaffInvite",
+      "description": "Email-based staff invitation for multi-device Realize Barbershop access.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "shopName": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "email": { "type": "string" },
+        "staffName": { "type": "string" },
+        "role": { "type": "string", "enum": ["OWNER", "KASIR", "KAPSTER"] },
+        "commissionRate": { "type": "integer" },
+        "status": { "type": "string", "enum": ["PENDING", "ACCEPTED", "REVOKED"] },
+        "acceptedUid": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "shopName", "ownerUid", "email", "staffName", "role", "commissionRate", "status", "createdAt", "updatedAt"]
+    },
+    "Shop": {
+      "title": "Shop",
+      "description": "Realize Barbershop workspace metadata and authorized member UIDs.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "ownerEmail": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "address", "phone", "ownerUid", "ownerEmail", "memberUids", "createdAt", "updatedAt"]
+    },
+    "ShopMember": {
+      "title": "ShopMember",
+      "description": "Authenticated user membership and role within a barbershop.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["OWNER", "KASIR", "KAPSTER"] },
+        "commissionRate": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "inviteId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "shopId", "ownerUid", "memberUids", "displayName", "email", "role", "commissionRate", "active", "createdAt", "updatedAt"]
+    },
+    "Barber": {
+      "title": "Barber",
+      "description": "Kapster / barber chair profile for queue assignment and commission tracking.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "commissionRate": { "type": "integer" },
+        "linkedUserId": { "type": "string" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "ownerUid", "memberUids", "name", "specialty", "commissionRate", "active", "createdAt", "updatedAt"]
+    },
+    "ServiceItem": {
+      "title": "ServiceItem",
+      "description": "Barbershop haircut or grooming service item.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "integer" },
+        "durationMinutes": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "ownerUid", "memberUids", "name", "category", "price", "durationMinutes", "active", "createdAt", "updatedAt"]
+    },
+    "QueueTicket": {
+      "title": "QueueTicket",
+      "description": "Customer queue ticket, digital struk antrean, and checkout transaction record.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "ticketCode": { "type": "string" },
+        "ticketNumber": { "type": "integer" },
+        "dateKey": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "barberId": { "type": "string" },
+        "barberName": { "type": "string" },
+        "barberCommissionRate": { "type": "integer" },
+        "serviceNames": { "type": "array" },
+        "serviceSummary": { "type": "string" },
+        "subtotal": { "type": "integer" },
+        "discount": { "type": "integer" },
+        "totalAmount": { "type": "integer" },
+        "paidAmount": { "type": "integer" },
+        "changeAmount": { "type": "integer" },
+        "paymentMethod": { "type": "string", "enum": ["NONE", "TUNAI", "QRIS", "TRANSFER"] },
+        "status": { "type": "string", "enum": ["WAITING", "IN_PROGRESS", "COMPLETED", "CANCELLED"] },
+        "notes": { "type": "string" },
+        "createdByUid": { "type": "string" },
+        "createdByName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "shopId", "ownerUid", "memberUids", "ticketCode", "ticketNumber", "dateKey",
+        "customerName", "customerPhone", "barberId", "barberName", "barberCommissionRate",
+        "serviceNames", "serviceSummary", "subtotal", "discount", "totalAmount",
+        "paidAmount", "changeAmount", "paymentMethod", "status", "notes",
+        "createdByUid", "createdByName", "createdAt", "updatedAt"
+      ]
+    },
+    "ExpenseItem": {
+      "title": "ExpenseItem",
+      "description": "Operational expense entry for barbershop financial reports.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["PERLENGKAPAN", "UTILITAS", "GAJI_KOMISI", "PROMOSI", "LAINNYA"] },
+        "amount": { "type": "integer" },
+        "dateKey": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdByUid": { "type": "string" },
+        "createdByName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "ownerUid", "memberUids", "title", "category", "amount", "dateKey", "notes", "createdByUid", "createdByName", "createdAt", "updatedAt"]
+    },
+    "StaffAccount": {
+      "title": "StaffAccount",
+      "description": "Username and password credential record for studio staff login and role access.",
+      "type": "object",
+      "properties": {
+        "shopId": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "memberUids": { "type": "array" },
+        "username": { "type": "string" },
+        "passwordHash": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["OWNER", "KASIR", "KAPSTER"] },
+        "commissionRate": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["shopId", "ownerUid", "memberUids", "username", "passwordHash", "displayName", "role", "commissionRate", "active", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Personal profile and active shop pointer for the authenticated user."
+    },
+    "/staff_invites/{inviteId}": {
+      "schema": { "$ref": "#/entities/StaffInvite" },
+      "description": "Pending and accepted staff invitations scoped by ownerUid or invitee email."
+    },
+    "/shops/{shopId}": {
+      "schema": { "$ref": "#/entities/Shop" },
+      "description": "Realize Barbershop studio document."
+    },
+    "/shops/{shopId}/members/{memberUid}": {
+      "schema": { "$ref": "#/entities/ShopMember" },
+      "description": "Authorized staff members with app access and roles."
+    },
+    "/shops/{shopId}/barbers/{barberId}": {
+      "schema": { "$ref": "#/entities/Barber" },
+      "description": "Kapster / barber profiles for assignment and commission calculation."
+    },
+    "/shops/{shopId}/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/ServiceItem" },
+      "description": "Haircut and grooming service catalog."
+    },
+    "/shops/{shopId}/queues/{queueId}": {
+      "schema": { "$ref": "#/entities/QueueTicket" },
+      "description": "Live customer queue tickets, struk antrean, and completed transactions."
+    },
+    "/shops/{shopId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/ExpenseItem" },
+      "description": "Operational expenses for profit and loss reporting."
+    },
+    "/shops/{shopId}/staff_accounts/{accountId}": {
+      "schema": { "$ref": "#/entities/StaffAccount" },
+      "description": "Username/password accounts for studio staff login and role permissions."
+    }
+  }
+}

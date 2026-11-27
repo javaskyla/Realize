@@ -1,0 +1,6 @@
+{
+  "name": "Realize Barbershop",
+  "description": "Aplikasi manajemen multi-perangkat untuk Realize Barbershop dengan fitur login, dashboard, antrean & struk, riwayat transaksi, laporan keuangan, dan kelola pengguna.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
